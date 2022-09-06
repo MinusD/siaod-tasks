@@ -46,7 +46,7 @@ int main() {
 
 	cout << "Enter number of digits: ";
 	cin >> size;
-	if (!file_generation(size)) { return 1; }
+	if (!file_generation(size)) return 1;
 	
 	// Start timer
 	auto start = high_resolution_clock::now();
@@ -72,7 +72,9 @@ int main() {
 	// Stop timer and count duration
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
-	
+
 	// Working time 
 	cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+
+	cout << "Size of binary array: \n\t" << data.size() << " bytes\n\t" << data.size() / 1024 << " kb";
 }
