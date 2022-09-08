@@ -29,15 +29,15 @@ void task1a() {
     cout << "Task 1.a\n";
     unsigned char x = 255; // 255 16 (00010000)
     unsigned char mask = 1;
-    x = x & (~(mask << 4));
-    cout << bitset<8>(x);
+    x = x & (~(mask << 4)); // Shift bits, invert and conjunction
+    cout << bitset<8>(x); // Outputting bit values
 }
 
 void task1b() {
     cout << "\n\nTask 1.б\n";
     unsigned char x = 0;
     unsigned char mask = 1;
-    x = x | (mask << 6);
+    x = x | (mask << 6); 
     cout << bitset<8>(x);
 }
 
@@ -60,18 +60,18 @@ void task2a() {
     short int size, tmp;
     cout << "Enter array size: ";
     cin >> size;
+    
+    // Input array
     for (int i = 0; i < size; i++) 
     {
         cin >> tmp;
         data = data | (1 << tmp);
     }
 
-    //cout << bitset<8>(data) << endl;
+    // Outing sorted array
     cout << "Sorted array: ";
     for (int i = 0; i < sizeof(data) * 8; i++)
-    {
         if ((1 << i) & data) cout << i << " ";
-    }
 }
 
 void task2b() {

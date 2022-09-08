@@ -8,8 +8,8 @@
 cout << "Task 1.a\n";
 unsigned char x = 255; // 255 16 (00010000)
 unsigned char mask = 1;
-x = x & (~(mask << 4));
-cout << bitset<8>(x);
+x = x & (~(mask << 4)); // Shift bits, invert and conjunction
+cout << bitset<8>(x); // Outputting bit values
 ```
 Для проверки введём число `16`, что в двоичной система `00010000`, после выполнения программы получим `00000000`, следовательно программа работает.
 
@@ -52,17 +52,17 @@ unsigned char data = 0;
 short int size, tmp;
 cout << "Enter array size: ";
 cin >> size;
+
+// Input array
 for (int i = 0; i < size; i++) 
 {
     cin >> tmp;
     data = data | (1 << tmp);
 }
-//cout << bitset<8>(data) << endl;
+// Outing sorted array
 cout << "Sorted array: ";
 for (int i = 0; i < sizeof(data) * 8; i++)
-{
     if ((1 << i) & data) cout << i << " ";
-}
 ```
 
 После того, как ввели размер массива, пробегаемся циклом и с помощию статичной маски (цифра `1`), запоминаем какие цифры мы ввели. Для вывода используем конструкцию работающую по аналагичному принципу. Только вместо дизъюнкции, используем коньюнкцию.
