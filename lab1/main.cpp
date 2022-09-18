@@ -45,7 +45,7 @@ void task1c() {
     cout << "\n\nTask 1.в\n";
     unsigned int a = 25;
     const int n = sizeof(int) * 8;
-    unsigned maska = (1 << n - 1); // Помещаем 1 в старший разряд
+    unsigned maska = (1 << (n - 1)); // Помещаем 1 в старший разряд
     cout << "Start mask: " << bitset<n>(maska) << endl;
     cout << "Result: ";
     for (int i = 1; i <= n; i++) {
