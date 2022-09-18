@@ -13,7 +13,8 @@
 #define BORDER_BOTTOM 1000000000000000
 #define BORDER_TOP 9999999999999999
 #define MAX_FILLED 0.75
-#define CONST_K 1
+#define CONST_C 2
+#define CONST_D 2
 
 using namespace std;
 
@@ -63,6 +64,14 @@ class HashTable {
     PoliceDelete *deleteFlag;
 
 public:
+    int getSize() const {
+        return size;
+    }
+
+    int getFilled() const {
+        return filled;
+    }
+
     // Constructor with one param (explicit)
     explicit HashTable(int size = 10) : size(size), filled(0), deleted() {
         data.resize(size);
@@ -78,14 +87,14 @@ public:
                 return false;
 
         for (int i = 0; i < size; ++i) {
-            int code = (hashFunction(insurancePolicy->number) + i * i * CONST_K) % size;
+            int code = (hashFunction(insurancePolicy->number) + CONST_C * i + CONST_D * i * i) % size;
             if (data[code] == NULL) {
+                filled++;
                 data[code] = insurancePolicy;
-                break;
+                return true;
             }
         }
-        filled++;
-        return true;
+        return false;
     }
 
     void showTableSeparator(int numSize) {
@@ -113,8 +122,8 @@ public:
         showTableSeparator(numSize);
     }
 
-    int hashFunction(unsigned long long police) {
-        return (int) (police % size);
+    int hashFunction(unsigned long long policy) {
+        return (int) (policy % size);
     }
 
     void rehash() {
@@ -131,7 +140,7 @@ public:
 
     int getCodeByPoliceNumber(unsigned long long policyNumber) {
         for (int i = 0; i < size; ++i) {
-            int code = (hashFunction(policyNumber) + i * i * CONST_K) % size;
+            int code = (hashFunction(policyNumber) + CONST_C * i + CONST_D * i * i) % size;
             if (data[code] && data[code]->number == policyNumber) {
                 return code;
             }
@@ -159,6 +168,19 @@ public:
             return data[code];
         } else
             return nullptr;
+    }
+
+    bool resize(int newSize) {
+        if (float(filled) / float(newSize) > MAX_FILLED) return false;
+        vector<InsurancePolicy *> data_t = data;
+        data.clear();
+        size = newSize;
+        deleted = 0;
+        data.resize(size);
+        for (auto el: data_t) {
+            if (el && el->isAlive()) add(el);
+        }
+        return true;
     }
 
 //    virtual ~HashTable() {
@@ -203,7 +225,9 @@ void generateList(HashTable &table, int size = 1) {
         //cout << *insurancePolicy << endl;
 
         // Add policy to table
-        table.add(insurancePolicy);
+        if (!table.add(insurancePolicy)) {
+            i--;
+        }
     }
 }
 
@@ -223,6 +247,7 @@ int main() {
                 "4. Show table\n"
                 "5. Show table with empty rows\n"
                 "6. Show policy info by number\n"
+                "7. Resize table\n"
                 "0. Exit\n";
         cin >> ex;
         switch (ex) {
@@ -259,6 +284,22 @@ int main() {
                 } else {
                     cout << "There is no policy with this number.\n";
                 }
+                break;
+            case 7:
+                cout << "Enter the table size number. \n";
+                cin >> size_t;
+                if (!table.resize(size_t)) {
+                    cout << "Using a table of this size is inefficient. \n";
+                }
+                break;
+            case 8:
+                cout << "Table size: " << table.getSize() << " | Filled: " << table.getFilled() << endl;
+                break;
+            case 0:
+                cout << "Bye, bye!\n";
+                break;
+            default:
+                cout << "Oops, Something went wrong! Command not found. \n";
                 break;
         }
     }
