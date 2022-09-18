@@ -20,6 +20,9 @@ using namespace std;
 
 
 class InsurancePolicy {
+    /**
+     * Medical policy class with number, company and last name.
+     */
 public:
     unsigned long long number;
     string company;
@@ -29,17 +32,10 @@ public:
                                                                                  company(move(company)),
                                                                                  surname(move(surname)) {}
 
-    bool operator==(const InsurancePolicy &rhs) const {
-        return number == rhs.number &&
-               company == rhs.company &&
-               surname == rhs.surname;
-    }
-
-    bool operator!=(const InsurancePolicy &rhs) const {
-        return !(rhs == *this);
-    }
-
     friend ostream &operator<<(ostream &os, const InsurancePolicy &policy) {
+        /**
+         * Overloading the cast-to-string operator.
+         */
         os << "number: " << policy.number << " company: " << policy.company << " surname: " << policy.surname;
         return os;
     }
@@ -48,6 +44,9 @@ public:
 };
 
 class PoliceDelete : public InsurancePolicy {
+    /**
+     * A class for tracking deleted entry in a table.
+     */
 public:
     PoliceDelete() : InsurancePolicy(0, "", "") {}
 
@@ -72,13 +71,22 @@ public:
         return filled;
     }
 
-    // Constructor with one param (explicit)
+
     explicit HashTable(int size = 10) : size(size), filled(0), deleted() {
+        /**
+         * Constructor with one param (explicit)
+         * Default size = 10
+         */
         data.resize(size);
         deleteFlag = new PoliceDelete();
     }
 
     bool add(InsurancePolicy *insurancePolicy) {
+        /**
+         * Adding a new policy to the table.
+         */
+
+        // Checking for efficiency using the current size
         if (float(filled + deleted) / float(size) > MAX_FILLED) rehash();
 
         // Code uniqueness check
@@ -87,7 +95,9 @@ public:
                 return false;
 
         for (int i = 0; i < size; ++i) {
-            int code = (hashFunction(insurancePolicy->number) + CONST_C * i + CONST_D * i * i) % size;
+            // We calculate the hash function until we hit an empty cell
+            int code =
+                    (hashFunction(insurancePolicy->number) + CONST_C * i + CONST_D * i * i) % size; // Quadratic probing
             if (data[code] == NULL) {
                 filled++;
                 data[code] = insurancePolicy;
@@ -98,19 +108,26 @@ public:
     }
 
     void showTableSeparator(int numSize) {
+        /**
+         * Table Separator
+         */
         cout << '+' << string(numSize + 2, '-') << '+' << string(18, '-') << '+' << string(15, '-') <<
              '+' << string(15, '-') << "+\n";
     }
 
     void showTable(bool withEmpty = false) {
-
+        /**
+         * Show table with all records (optional, show empty entry in table)
+         */
         int numSize = to_string(size).size();
-        numSize = (numSize < 4 ? 4 : numSize);
+        numSize = (numSize < 4 ? 4 : numSize); // Len of index (minimum 4)
+
         cout << "[ Size: " << size << " | Filled: " << filled << " | Deleted: " << deleted << " ] \n";
         showTableSeparator(numSize);
         cout << "| Code" << string(numSize - 3, ' ') << "| Number           | Company       | Surname       | \n";
         showTableSeparator(numSize);
 
+        // Table data output
         for (int i = 0; i < size; ++i) {
             if (data[i] && data[i]->isAlive()) {
                 printf("| %0*d | %016lld | %-13s | %-13s | \n", numSize, i, data[i]->number, data[i]->company.c_str(),
@@ -123,10 +140,16 @@ public:
     }
 
     int hashFunction(unsigned long long policy) {
+        /**
+         * Hash function based division
+         */
         return (int) (policy % size);
     }
 
     void rehash() {
+        /**
+         * Rehashing a table when it overflows.
+         */
         vector<InsurancePolicy *> data_t = data;
         data.clear();
         filled = 0;
@@ -139,6 +162,9 @@ public:
     }
 
     int getCodeByPoliceNumber(unsigned long long policyNumber) {
+        /**
+         * Getting the hash of the policy by its number.
+         */
         for (int i = 0; i < size; ++i) {
             int code = (hashFunction(policyNumber) + CONST_C * i + CONST_D * i * i) % size;
             if (data[code] && data[code]->number == policyNumber) {
@@ -149,6 +175,9 @@ public:
     }
 
     bool deleteByPolicyNumber(unsigned long long policyNumber) {
+        /**
+         * Deleting an entry in the table by policy number.
+         */
         int code = getCodeByPoliceNumber(policyNumber);
         if (code != -1) {
             cout << code << endl;
@@ -163,23 +192,30 @@ public:
     }
 
     InsurancePolicy *getPolicyByNumber(unsigned long long policyNumber) {
+        /**
+         * Returns a link to the policy object by its number.
+         */
+
+        // Getting code
         int code = getCodeByPoliceNumber(policyNumber);
-        if (code != -1) {
-            return data[code];
-        } else
-            return nullptr;
+        return (code != -1 ? data[code] : nullptr);
     }
 
     bool resize(int newSize) {
-        if (float(filled) / float(newSize) > MAX_FILLED) return false;
-        vector<InsurancePolicy *> data_t = data;
-        data.clear();
+        /**
+         * Manual resizing of the table with a check for the effectiveness of the resulting table.
+         */
+
+        if (float(filled) / float(newSize) > MAX_FILLED) return false; // Efficiency test
+        vector<InsurancePolicy *> data_t = data; // Copy data
+        data.clear(); // Clear current vector
         size = newSize;
         deleted = 0;
         data.resize(size);
-        for (auto el: data_t) {
+
+        // Add entry to a new table
+        for (auto el: data_t)
             if (el && el->isAlive()) add(el);
-        }
         return true;
     }
 
@@ -193,6 +229,11 @@ public:
 
 
 void generateList(HashTable &table, int size = 1) {
+    /**
+     * The function generates a certain number of random records.
+     */
+
+    // Random utilities
     default_random_engine u{};
     uniform_int_distribution<> d{};
     u.seed(random_device()()); // Analog srand
@@ -248,6 +289,7 @@ int main() {
                 "5. Show table with empty rows\n"
                 "6. Show policy info by number\n"
                 "7. Resize table\n"
+                "8. Table stats\n"
                 "0. Exit\n";
         cin >> ex;
         switch (ex) {
