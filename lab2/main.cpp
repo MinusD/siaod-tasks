@@ -42,22 +42,35 @@ public:
         os << "number: " << policy.number << " company: " << policy.company << " surname: " << policy.surname;
         return os;
     }
+
+    virtual bool isAlive() { return true; }
+};
+
+class PoliceDelete : public InsurancePolicy {
+public:
+    PoliceDelete() : InsurancePolicy(0, "", "") {}
+
+
+    bool isAlive() override { return false; }
 };
 
 
 class HashTable {
     int size;
     int filled;
+    int deleted;
     vector<InsurancePolicy *> data;
+    PoliceDelete *deleteFlag;
 
 public:
     // Constructor with one param (explicit)
-    explicit HashTable(int size = 10) : size(size), filled(0) {
+    explicit HashTable(int size = 10) : size(size), filled(0), deleted() {
         data.resize(size);
+        deleteFlag = new PoliceDelete();
     }
 
     bool add(InsurancePolicy *insurancePolicy) {
-        if (float(filled) / float(size) > MAX_FILLED) rehash();
+        if (float(filled + deleted) / float(size) > MAX_FILLED) rehash();
 
         // Code uniqueness check
         for (auto el: data)
@@ -65,9 +78,7 @@ public:
                 return false;
 
         for (int i = 0; i < size; ++i) {
-
             int code = (hashFunction(insurancePolicy->number) + i * i * CONST_K) % size;
-
             if (data[code] == NULL) {
                 data[code] = insurancePolicy;
                 break;
@@ -86,13 +97,13 @@ public:
 
         int numSize = to_string(size).size();
         numSize = (numSize < 4 ? 4 : numSize);
+        cout << "[ Size: " << size << " | Filled: " << filled << " | Deleted: " << deleted << " ] \n";
         showTableSeparator(numSize);
         cout << "| Code" << string(numSize - 3, ' ') << "| Number           | Company       | Surname       | \n";
         showTableSeparator(numSize);
 
-
         for (int i = 0; i < size; ++i) {
-            if (data[i]) {
+            if (data[i] && data[i]->isAlive()) {
                 printf("| %0*d | %016lld | %-13s | %-13s | \n", numSize, i, data[i]->number, data[i]->company.c_str(),
                        data[i]->surname.c_str());
             } else if (withEmpty) {
@@ -108,10 +119,46 @@ public:
 
     void rehash() {
         vector<InsurancePolicy *> data_t = data;
+        data.clear();
+        filled = 0;
+        deleted = 0;
         size *= 2;
-        for (int i = 0; i < size; ++i) {
-            
+        data.resize(size);
+        for (auto el: data_t) {
+            if (el && el->isAlive()) add(el);
         }
+    }
+
+    int getCodeByPoliceNumber(unsigned long long policyNumber) {
+        for (int i = 0; i < size; ++i) {
+            int code = (hashFunction(policyNumber) + i * i * CONST_K) % size;
+            if (data[code] && data[code]->number == policyNumber) {
+                return code;
+            }
+        }
+        return -1;
+    }
+
+    bool deleteByPolicyNumber(unsigned long long policyNumber) {
+        int code = getCodeByPoliceNumber(policyNumber);
+        if (code != -1) {
+            cout << code << endl;
+            InsurancePolicy *policy_t = data[code];
+            data[code] = deleteFlag;
+            deleted++;
+            filled--;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    InsurancePolicy *getPolicyByNumber(unsigned long long policyNumber) {
+        int code = getCodeByPoliceNumber(policyNumber);
+        if (code != -1) {
+            return data[code];
+        } else
+            return nullptr;
     }
 
 //    virtual ~HashTable() {
@@ -165,14 +212,55 @@ int main() {
     srand(time(NULL));
     setlocale(LC_ALL, "rus");
     HashTable table;
-    generateList(table, 2);
-    table.showTable();
-    cout << endl << endl;
-    table.add(new InsurancePolicy(1000, "1Ghb", "Gdfs"));
-    table.add(new InsurancePolicy(2000, "2Ghb231", "Gdfffs"));
-    table.add(new InsurancePolicy(3000, "3Ghb231", "Gdfffs"));
-    table.add(new InsurancePolicy(4000, "4Ghb231", "Gdfffs"));
-    table.showTable();
-    //table.showTable(true);
+    int ex = -1, size_t;
+    unsigned long long number_t;
+    string company_t, surname_t;
+    while (ex) {
+//        system("cls");
+        cout << "1. Random generate list\n"
+                "2. Hand input \n"
+                "3. Delete by policy number\n"
+                "4. Show table\n"
+                "5. Show table with empty rows\n"
+                "6. Show policy info by number\n"
+                "0. Exit\n";
+        cin >> ex;
+        switch (ex) {
+            case 1:
+                cout << "New entries:";
+                cin >> size_t;
+                generateList(table, size_t);
+                break;
+            case 2:
+                cout << "Enter Police number, Company and Surname\n";
+                cin >> number_t >> company_t >> surname_t;
+                if (!table.add(new InsurancePolicy(number_t, company_t, surname_t)))
+                    cout << "A policy with this number already exists.\n";
+                break;
+            case 3:
+                cout << "Enter the number of the policy to be removed\n";
+                cin >> number_t;
+                if (!table.deleteByPolicyNumber(number_t))
+                    cout << "There is no policy with this number.\n";
+                break;
+            case 4:
+                table.showTable();
+                break;
+            case 5:
+                table.showTable(true);
+                break;
+            case 6:
+                cout << "Enter the required policy number\n";
+                cin >> number_t;
+                InsurancePolicy *policy_t;
+                policy_t = table.getPolicyByNumber(number_t);
+                if (policy_t) {
+                    cout << *policy_t << endl;
+                } else {
+                    cout << "There is no policy with this number.\n";
+                }
+                break;
+        }
+    }
     return 0;
 }
