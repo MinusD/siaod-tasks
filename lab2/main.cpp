@@ -128,14 +128,12 @@ public:
         showTableSeparator(numSize);
 
         // Table data output
-        for (int i = 0; i < size; ++i) {
-            if (data[i] && data[i]->isAlive()) {
+        for (int i = 0; i < size; ++i)
+            if (data[i] && data[i]->isAlive())
                 printf("| %0*d | %016lld | %-13s | %-13s | \n", numSize, i, data[i]->number, data[i]->company.c_str(),
                        data[i]->surname.c_str());
-            } else if (withEmpty) {
+            else if (withEmpty)
                 printf("| %0*d | %16s | %13s | %13s | \n", numSize, i, "", "", "");
-            }
-        }
         showTableSeparator(numSize);
     }
 
@@ -156,9 +154,9 @@ public:
         deleted = 0;
         size *= 2;
         data.resize(size);
-        for (auto el: data_t) {
-            if (el && el->isAlive()) add(el);
-        }
+        for (auto el: data_t)
+            if (el && el->isAlive())
+                add(el);
     }
 
     int getCodeByPoliceNumber(unsigned long long policyNumber) {
@@ -167,9 +165,8 @@ public:
          */
         for (int i = 0; i < size; ++i) {
             int code = (hashFunction(policyNumber) + CONST_C * i + CONST_D * i * i) % size;
-            if (data[code] && data[code]->number == policyNumber) {
+            if (data[code] && data[code]->number == policyNumber)
                 return code;
-            }
         }
         return -1;
     }
@@ -215,7 +212,8 @@ public:
 
         // Add entry to a new table
         for (auto el: data_t)
-            if (el && el->isAlive()) add(el);
+            if (el && el->isAlive())
+                add(el);
         return true;
     }
 
@@ -263,7 +261,6 @@ void generateList(HashTable &table, int size = 1) {
                   (unsigned long long) d(u, uniform_int_distribution<>::param_type{1000000, RAND_MAX})) %
                  (BORDER_TOP - BORDER_BOTTOM)), company, surname
         );
-        //cout << *insurancePolicy << endl;
 
         // Add policy to table
         if (!table.add(insurancePolicy)) {
