@@ -4,7 +4,7 @@ project(siaod_tasks)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(siaod_tasks
-        lab2/main.cpp)
+        lab2/alt-AL/main.cpp)
 
 #add_executable(siaod_tasks
 #        lab1/alt-BK/1a.cpp
