@@ -49,11 +49,11 @@ cmake_ninja_workdir = E$:/Education/—»¿Œƒ-2/siaod-tasks/cmake-build-debug/
 
 build cmake_object_order_depends_target_siaod_tasks: phony || CMakeFiles/siaod_tasks.dir
 
-build CMakeFiles/siaod_tasks.dir/lab2/alt-AL/main.cpp.obj: CXX_COMPILER__siaod_tasks_Debug E$:/Education/—»¿Œƒ-2/siaod-tasks/lab2/alt-AL/main.cpp || cmake_object_order_depends_target_siaod_tasks
-  DEP_FILE = CMakeFiles\siaod_tasks.dir\lab2\alt-AL\main.cpp.obj.d
+build CMakeFiles/siaod_tasks.dir/lab3/main.cpp.obj: CXX_COMPILER__siaod_tasks_Debug E$:/Education/—»¿Œƒ-2/siaod-tasks/lab3/main.cpp || cmake_object_order_depends_target_siaod_tasks
+  DEP_FILE = CMakeFiles\siaod_tasks.dir\lab3\main.cpp.obj.d
   FLAGS = -g -std=gnu++14
   OBJECT_DIR = CMakeFiles\siaod_tasks.dir
-  OBJECT_FILE_DIR = CMakeFiles\siaod_tasks.dir\lab2\alt-AL
+  OBJECT_FILE_DIR = CMakeFiles\siaod_tasks.dir\lab3
 
 
 # =============================================================================
@@ -63,7 +63,7 @@ build CMakeFiles/siaod_tasks.dir/lab2/alt-AL/main.cpp.obj: CXX_COMPILER__siaod_t
 #############################################
 # Link the executable siaod_tasks.exe
 
-build siaod_tasks.exe: CXX_EXECUTABLE_LINKER__siaod_tasks_Debug CMakeFiles/siaod_tasks.dir/lab2/alt-AL/main.cpp.obj
+build siaod_tasks.exe: CXX_EXECUTABLE_LINKER__siaod_tasks_Debug CMakeFiles/siaod_tasks.dir/lab3/main.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\siaod_tasks.dir
