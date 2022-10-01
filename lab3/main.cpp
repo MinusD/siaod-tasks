@@ -9,8 +9,6 @@ using namespace std;
  * @param str - the string to search
  * @return found words
  */
- * @return
- */
 int main() {
     string sentences = "Would you go, Ilya, with a newspaper, Kolya, QQ.", tmp;
     const regex r(R"(, (\w+),)");
