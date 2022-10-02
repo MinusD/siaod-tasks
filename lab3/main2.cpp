@@ -22,20 +22,85 @@ int max(int a, int b) {
     return a > b ? a : b;
 }
 
-int main() {
-    string a, b;
-    int maxLen = 0, index = 0;
-    string sentences = "Would you go, Ilya, with a newspaper, Kolya, QQ.", tmp;
-    const regex r(R"(, (\w+),)");
-    smatch match;
-    while (regex_search(sentences, match, r)) {
-        // Trim commas from the string
-        tmp =  match.str(0).substr(2, -1);
-        tmp.erase(tmp.size() - 1);
-        cout << tmp << endl;
-
-        // Suffix to find the rest of the string
-        sentences = match.suffix().str();
+vector<char> stringToVector(string str) {
+    /**
+     * Converts a string to a vector
+     * @param str - string to convert
+     * @return vector of chars
+     */
+    vector<char> vec;
+    for (char c: str) {
+        vec.push_back(c);
     }
+    return vec;
+}
+
+vector<int> prefixFunction(vector<char> str) {
+    /**
+     * Calculates the prefix function for a string
+     * @param str - string to calculate
+     * @return prefix function
+     */
+    int n = str.size();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+        int j = pi[i - 1];
+
+        // Пока не совпадет символ или не дойдем до начала строки
+        while (j > 0 && str[i] != str[j]) {
+            j = pi[j - 1];
+        }
+
+        // Если символы совпали, то увеличиваем значение префикса
+        if (str[i] == str[j]) {
+            j++;
+        }
+        pi[i] = j;
+    }
+    return pi;
+}
+
+void showPrefix(const vector<int> &pi) {
+    /**
+     * Shows the prefix function
+     * @param pi - prefix function
+     */
+    for (int i: pi) {
+        cout << i << " ";
+    }
+    cout << endl;
+}
+
+
+int main() {
+    string as, bs;
+    int maxLen = 0, index = 0;
+//    as = "aabaa";
+//    bs = "aaaaaaba1aaa";
+    cin >> as >> bs;
+
+    // Переводим строки в векторы
+    vector<char> a = stringToVector(as), b = stringToVector(bs);
+
+    // Генерируем префикс-функцию для строки a
+    vector<int> pi = prefixFunction(a);
+    for (int i = 0; i < b.size(); i++) {
+
+        while (index > 0 && b[i] != a[index]) {
+            index = pi[index - 1];
+        }
+
+        // Если символы совпали, то увеличиваем значение префикса
+        if (b[i] == a[index]) {
+            index++;
+            maxLen = max(maxLen, index);
+        }
+
+        // Если префикс равен длине строки, то выходим, строка входит целиком
+        if (index == a.size()) {
+            index = pi[index - 1];
+        }
+    }
+    cout << "Max length: " << maxLen << endl;
     return 0;
 }
