@@ -1,3 +1,3 @@
-/Users/minusd/CLionProjects/siaod-tasks/cmake-build-debug/CMakeFiles/siaod_tasks.dir
-/Users/minusd/CLionProjects/siaod-tasks/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/minusd/CLionProjects/siaod-tasks/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+E:/Education/СИАОД-2/siaod-tasks/cmake-build-debug/CMakeFiles/siaod_tasks.dir
+E:/Education/СИАОД-2/siaod-tasks/cmake-build-debug/CMakeFiles/edit_cache.dir
+E:/Education/СИАОД-2/siaod-tasks/cmake-build-debug/CMakeFiles/rebuild_cache.dir
