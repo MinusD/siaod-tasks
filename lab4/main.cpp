@@ -31,7 +31,7 @@
  *      3. Если узел красный, то оба его потомка черные.
  *      4. Глубина в черных узлах одинакова.
  *
- *
+ *  https://dreampuf.github.io/GraphvizOnline/
  *
  */
 
@@ -107,6 +107,8 @@ public:
             return;
         }
 
+        fixTree(newNode);
+
 
 
 //        while (current != nil) {
@@ -136,6 +138,102 @@ public:
 
     }
 
+    void fixTree(Node *node) {
+        Node *parent = nil;
+        Node *grandparent = nil;
+
+        while ((node != root) && (node->color != false) && (node->parent->color == true)) {
+            parent = node->parent;
+            grandparent = node->parent->parent;
+
+            if (parent == grandparent->left) {
+                Node *uncle = grandparent->right;
+
+                if (uncle->color == true) {
+                    grandparent->color = true;
+                    parent->color = false;
+                    uncle->color = false;
+                    node = grandparent;
+                } else {
+                    if (node == parent->right) {
+                        leftRotate(parent);
+                        node = parent;
+                        parent = node->parent;
+                    }
+
+                    rightRotate(grandparent);
+                    swap(parent->color, grandparent->color);
+                    node = parent;
+                }
+            } else {
+                Node *uncle = grandparent->left;
+
+                if (uncle->color == true) {
+                    grandparent->color = true;
+                    parent->color = false;
+                    uncle->color = false;
+                    node = grandparent;
+                } else {
+                    if (node == parent->left) {
+                        rightRotate(parent);
+                        node = parent;
+                        parent = node->parent;
+                    }
+
+                    leftRotate(grandparent);
+                    swap(parent->color, grandparent->color);
+                    node = parent;
+                }
+            }
+        }
+
+        root->color = false;
+    }
+
+    void leftRotate(Node *node) {
+        Node *right = node->right;
+        node->right = right->left;
+
+        if (node->right != nil) {
+            node->right->parent = node;
+        }
+
+        right->parent = node->parent;
+
+        if (node->parent == nil) {
+            root = right;
+        } else if (node == node->parent->left) {
+            node->parent->left = right;
+        } else {
+            node->parent->right = right;
+        }
+
+        right->left = node;
+        node->parent = right;
+    }
+
+    void rightRotate(Node *node) {
+        Node *left = node->left;
+        node->left = left->right;
+
+        if (node->left != nil) {
+            node->left->parent = node;
+        }
+
+        left->parent = node->parent;
+
+        if (node->parent == nil) {
+            root = left;
+        } else if (node == node->parent->left) {
+            node->parent->left = left;
+        } else {
+            node->parent->right = left;
+        }
+
+        left->right = node;
+        node->parent = left;
+    }
+
     void showTreeGraphiz(Node *node = nullptr, Node *prev = nullptr, bool isLeft = false) {
         /*
          * Show tree Graphiz
@@ -156,10 +254,10 @@ public:
             showTreeGraphiz(node->left, node, true);
             showTreeGraphiz(node->right, node, false);
         } else {
-            if (prev != nullptr) {
-                cout << "\"nil_" << prev->value << (isLeft ? "_l\"" : "_r\"") << " [color=black];" << endl;
-                cout << prev->value << " -> " << "\"nil_" << prev->value << (isLeft ? "_l\"" : "_r\"") << endl;
-            }
+//            if (prev != nullptr) {
+//                cout << "\"nil_" << prev->value << (isLeft ? "_l\"" : "_r\"") << " [color=black];" << endl;
+//                cout << prev->value << " -> " << "\"nil_" << prev->value << (isLeft ? "_l\"" : "_r\"") << endl;
+//            }
         }
 
 
@@ -169,7 +267,12 @@ public:
 
 int main() {
     Tree tree;
-    vector<double> values = {1.3, 2.3, 3.3, 4.3, 5.3, 6.3, 7.3, 8.3, 9.3, 10.3};
+    vector<double> values = {
+            1.3, 2.3, 3.3, 4.3, 5.3, 6.3, 7.3, 8.3, 9.3, 10.3,
+            11.3, 12.3, 13.3, 14.3, 15.3, 16.3, 17.3, 18.3, 19.3, 20.3,
+            21.3, 22.3, 23.3, 24.3, 25.3, 26.3, 27.3, 28.3, 29.3, 30.3,
+            31.3, 32.3, 33.3, 34.3, 35.3, 36.3, 37.3, 38.3, 39.3, 40.3,
+    };
     // Перемешать значения
     for (int i = 0; i < values.size(); i++) {
         int index = rand() % values.size();
