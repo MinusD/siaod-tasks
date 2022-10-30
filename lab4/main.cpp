@@ -167,7 +167,6 @@ public:
                 }
             }
         }
-
         root->color = false;
     }
 
@@ -294,34 +293,26 @@ private:
     }
 
     // Вывод дерева в формате Graphiz
-    void showTreeGraphiz(Node *node = nullptr, Node *prev = nullptr, bool isLeft = false) {
-        /*
-         * Show tree Graphiz
-         */
-        if (node == nullptr) {
-            node = root;
-        }
-//        cout << node->value << " [color=" << (node->color ? "red" : "black") << "];" << endl;
-        if (node != nil) {
-            if (node->left != nil) {
-                cout << node->value << " [color=" << (node->color ? "red" : "black") << "];" << endl;
-                cout << node->value << " -> " << node->left->value << ";" << endl;
-            }
-            if (node->right != nil) {
-                cout << node->value << " [color=" << (node->color ? "red" : "black") << "];" << endl;
-                cout << node->value << " -> " << node->right->value << ";" << endl;
-            }
-            showTreeGraphiz(node->left, node, true);
-            showTreeGraphiz(node->right, node, false);
-        } else {
-//            if (prev != nullptr) {
-//                cout << "\"nil_" << prev->value << (isLeft ? "_l\"" : "_r\"") << " [color=black];" << endl;
-//                cout << prev->value << " -> " << "\"nil_" << prev->value << (isLeft ? "_l\"" : "_r\"") << endl;
-//            }
-        }
-
-
+void showTreeGraphiz(Node *node = nullptr) {
+    /*
+     * Show tree Graphiz
+     */
+    if (node == nullptr) {
+        node = root;
     }
+    if (node != nil) {
+        if (node->left != nil) {
+            cout << node->value << " [color=" << (node->color ? "red" : "black") << "];" << endl;
+            cout << node->value << " -> " << node->left->value << ";" << endl;
+        }
+        if (node->right != nil) {
+            cout << node->value << " [color=" << (node->color ? "red" : "black") << "];" << endl;
+            cout << node->value << " -> " << node->right->value << ";" << endl;
+        }
+        showTreeGraphiz(node->left);
+        showTreeGraphiz(node->right);
+    }
+}
 
 };
 
@@ -336,16 +327,16 @@ int main() {
 //            21.3, 22.3, 23.3, 24.3, 25.3, 26.3, 27.3, 28.3, 29.3, 30.3,
 //            31.3, 32.3, 33.3, 34.3, 35.3, 36.3, 37.3, 38.3, 39.3, 40.3,
     };
-    // Перемешать значения
-    for (int i = 0; i < values.size(); i++) {
-        int index = rand() % values.size();
-        double temp = values[i];
-        values[i] = values[index];
-        values[index] = temp;
-    }
-    for (double value: values) {
-        tree.add(value);
-    }
+//    // Перемешать значения
+//    for (int i = 0; i < values.size(); i++) {
+//        int index = rand() % values.size();
+//        double temp = values[i];
+//        values[i] = values[index];
+//        values[index] = temp;
+//    }
+//    for (double value: values) {
+//        tree.add(value);
+//    }
 
     // Текстовое меню
     int choice = 0;
