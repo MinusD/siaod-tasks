@@ -109,28 +109,6 @@ public:
 
         fixTree(newNode);
 
-
-
-//        while (current != nil) {
-//            if (value < current->value) {
-//                if (current->left == nil){
-//                    current->left = newNode;
-//                    newNode->parent = current;
-//                    break;
-//                } else {
-//                    current = current->left;
-//                }
-//            } else {
-//                if (current->right == nil){
-//                    current->right = newNode;
-//                    newNode->parent = current;
-//                    break;
-//                } else {
-//                    current = current->right;
-//                }
-//            }
-//        }
-
         if (root == nil) {
             root = newNode;
             root->color = false; // Black
@@ -139,6 +117,9 @@ public:
     }
 
     void fixTree(Node *node) {
+        /*
+         * Fix tree after adding new node
+         */
         Node *parent = nil;
         Node *grandparent = nil;
 
@@ -234,6 +215,85 @@ public:
         node->parent = left;
     }
 
+    void showGraphiz() {
+        cout << "digraph G {" << endl;
+        showTreeGraphiz();
+        cout << "}" << endl;
+    }
+
+    // Прямой обход
+    void showTree(Node *node = nullptr) {
+        if (node == nullptr) {
+            node = root;
+        }
+        if (node != nil) {
+            cout << node->value << " ";
+            showTree(node->left);
+            showTree(node->right);
+        }
+    }
+
+    // Симметричный обход
+    void showTreeSymmetric(Node *node = nullptr) {
+        if (node == nullptr) {
+            node = root;
+        }
+        if (node != nil) {
+            showTreeSymmetric(node->left);
+            cout << node->value << " ";
+            showTreeSymmetric(node->right);
+        }
+    }
+
+    // Сумма листьев
+    double sumLeaves(Node *node = nullptr) {
+        if (node == nullptr) {
+            node = root;
+        }
+        if (node != nil) {
+            if (node->left == nil && node->right == nil) {
+                return node->value;
+            }
+            return sumLeaves(node->left) + sumLeaves(node->right);
+        }
+        return 0;
+    }
+
+    // Среднее арифметическое всех узлов
+    double averageNodes(Node *node = nullptr) {
+        if (node == nullptr) {
+            node = root;
+        }
+        if (node != nil) {
+            return sumNodes(node) / countNodes(node);
+        }
+        return 0;
+    }
+
+private:
+    // Количество узлов
+    int countNodes(Node *node = nullptr) {
+        if (node == nullptr) {
+            node = root;
+        }
+        if (node != nil) {
+            return 1 + countNodes(node->left) + countNodes(node->right);
+        }
+        return 0;
+    }
+
+    // Сумма всех узлов
+    double sumNodes(Node *node = nullptr) {
+        if (node == nullptr) {
+            node = root;
+        }
+        if (node != nil) {
+            return node->value + sumNodes(node->left) + sumNodes(node->right);
+        }
+        return 0;
+    }
+
+    // Вывод дерева в формате Graphiz
     void showTreeGraphiz(Node *node = nullptr, Node *prev = nullptr, bool isLeft = false) {
         /*
          * Show tree Graphiz
@@ -262,16 +322,19 @@ public:
 
 
     }
+
 };
 
 
 int main() {
+    system("chcp 65001");
+
     Tree tree;
     vector<double> values = {
             1.3, 2.3, 3.3, 4.3, 5.3, 6.3, 7.3, 8.3, 9.3, 10.3,
-            11.3, 12.3, 13.3, 14.3, 15.3, 16.3, 17.3, 18.3, 19.3, 20.3,
-            21.3, 22.3, 23.3, 24.3, 25.3, 26.3, 27.3, 28.3, 29.3, 30.3,
-            31.3, 32.3, 33.3, 34.3, 35.3, 36.3, 37.3, 38.3, 39.3, 40.3,
+//            11.3, 12.3, 13.3, 14.3, 15.3, 16.3, 17.3, 18.3, 19.3, 20.3,
+//            21.3, 22.3, 23.3, 24.3, 25.3, 26.3, 27.3, 28.3, 29.3, 30.3,
+//            31.3, 32.3, 33.3, 34.3, 35.3, 36.3, 37.3, 38.3, 39.3, 40.3,
     };
     // Перемешать значения
     for (int i = 0; i < values.size(); i++) {
@@ -283,8 +346,58 @@ int main() {
     for (double value: values) {
         tree.add(value);
     }
-    cout << "digraph G {" << endl;
-    tree.showTreeGraphiz();
-    cout << "}" << endl;
+
+    // Текстовое меню
+    int choice = 0;
+    while (choice != 7) {
+        cout << "1. Добавление элемента" << endl;
+        cout << "2. Показать дерево (Прямой ход)" << endl;
+        cout << "3. Симметричный обход" << endl;
+        cout << "4. Сумма листьев" << endl;
+        cout << "5. Среднее арифметическое всех узлов" << endl;
+        cout << "6. Показать дерево Graphiz" << endl;
+        cout << "7. Выход" << endl;
+        cout << "Выберите пункт меню: ";
+        cin >> choice;
+        switch (choice) {
+            case 1: {
+                double value;
+                cout << "Введите значение: ";
+                cin >> value;
+                tree.add(value);
+                break;
+            }
+            case 2: {
+                tree.showTree();
+                cout << endl;
+                break;
+            }
+            case 3: {
+                tree.showTreeSymmetric();
+                cout << endl;
+                break;
+            }
+            case 4: {
+                cout << "Сумма листьев: " << tree.sumLeaves() << endl;
+                break;
+            }
+            case 5: {
+                cout << "Среднее арифметическое всех узлов: " << tree.averageNodes() << endl;
+                break;
+            }
+            case 6: {
+                tree.showGraphiz();
+                break;
+            }
+            case 7: {
+                break;
+            }
+            default: {
+                cout << "Неверный пункт меню" << endl;
+                break;
+            }
+        }
+    }
+
     return 0;
 }
