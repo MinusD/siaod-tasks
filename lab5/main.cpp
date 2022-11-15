@@ -114,6 +114,7 @@ public:
                 if (matrix[i][j] != 0) {
                     string from = nodes[i]->name;
                     string to = nodes[j]->name;
+
                     if (find(printedTo.begin(), printedTo.end(), to) == printedTo.end() ||
                         find(printedFrom.begin(), printedFrom.end(), from) == printedFrom.end()) {
                         cout << "    " << from << " -> " << to << " [label=\"" << matrix[i][j] << "\", arrowhead=none];" << endl;
