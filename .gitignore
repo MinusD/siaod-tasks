@@ -34,3 +34,5 @@
 # Custom
 */~$*.docx
 */~*.tmp
+/cmake-build-debug/*
+/.idea/*
