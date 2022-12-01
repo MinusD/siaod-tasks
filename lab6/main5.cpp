@@ -6,29 +6,12 @@
  * Выходные данные: кодовая таблица, закодированная строка
  *
  *
-<>:0.076923   | 000
-r: 0.076923   | 101
-o: 0.15385    | 110
-H: 0.076923   | 010
-l: 0.23077    | 111
-w: 0.076923   | 100
-d: 0.076923   | 0110
-,: 0.076923   | 0011
-!: 0.076923   | 0010
-e: 0.076923   | 0111
-
-l = 0 d = 6 r = 9
-l = 0 d = 3 r = 5
-l = 0 d = 1 r = 2
-l = 3 d = 4 r = 5
-l = 6 d = 8 r = 9
  */
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <map>
 
 using namespace std;
 
@@ -50,9 +33,11 @@ public:
         /*
          * Рекурсивная функция для получения кодов
          */
+
+
         if (left + 1 == right) {
-            codes[frequencies[left]] += '0';
-            codes[frequencies[right]] += '1';
+            codes[left] += "0";
+            codes[right] += "1";
             return;
         }
 
@@ -60,17 +45,15 @@ public:
             return;
         }
 
-
         int leftSum = 0;
         int rightSum = frequencies[right];
         int border = right;
+
 
         // Сумма частот слева от границы
         for (int i = left; i < right; i++) {
             leftSum += frequencies[i];
         }
-
-
 
         // Поиск границы
         while (rightSum < leftSum) {
@@ -78,22 +61,28 @@ public:
             rightSum += frequencies[border];
             leftSum -= frequencies[border];
         }
-        cout << "l = " << left << " d = " << border << " r = " << right << " leftSum: " << leftSum << "rightSum: " << rightSum << endl;
-//        cout << "left: " << left << " right: " << right << " border: " << border << endl;
-
         // Добавление 0 и 1 к кодам
         for (int i = left; i <= right; i++) {
-            if (i <= border - 1){
-                codes[frequencies[i]] += '0';
+            if  (i <= border - 1) {
+                codes[i] += "0";
             } else {
-                codes[frequencies[i]] += '1';
+                codes[i] += "1";
             }
         }
-
         getCodes(left, border - 1);
         getCodes(border, right);
+    }
 
-
+    int getIndex(char c) {
+        /*
+         * Получение индекса символа
+         */
+        for (int i = 0; i < symbols.size(); i++) {
+            if (symbols[i] == c) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     string code() {
@@ -103,7 +92,31 @@ public:
         getFrequency();
         codes.resize(frequencies.size());
         getCodes(0, frequencies.size() - 1);
-        return "";
+
+        string result;
+        for (char c : text) {
+            result += codes[getIndex(c)];
+        }
+        return result;
+//        return "";
+    }
+
+    string decode(string code) {
+        /*
+         * Декодирование
+         */
+        string result;
+        int i = 0;
+        while (i < code.size()) {
+            for (int j = 0; j < codes.size(); j++) {
+                if (code.substr(i, codes[j].size()) == codes[j]) {
+                    result += symbols[j];
+                    i += codes[j].size();
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     void getFrequency() {
@@ -123,7 +136,7 @@ public:
         // Сортируем
         for (int i = 0; i < symbols.size(); i++) {
             for (int j = i + 1; j < symbols.size(); j++) {
-                if (frequencies[i] < frequencies[j]) {
+                if (frequencies[i] > frequencies[j]) {
                     swap(frequencies[i], frequencies[j]);
                     swap(symbols[i], symbols[j]);
                 }
@@ -142,8 +155,8 @@ public:
     void printCodes() {
         cout << "Таблица кодов:" << endl;
         cout << "Символ\tКод" << endl;
-        for (int i = 0; i < symbols.size(); i++) {
-            cout << symbols[i] << "\t" << codes[frequencies[i]] << endl;
+        for (int i = symbols.size() - 1; i >= 0; i--) {
+            cout << symbols[i] << "\t" << codes[i] << endl;
         }
     }
 
@@ -159,8 +172,11 @@ int main() {
     cout << "Длина текста: " << text.length() << endl;
 
     Coder coder(text);
-    coder.code();
+    string code = coder.code();
+    cout << "Закодированный текст: " << code << endl;
+    cout << "Длина закодированного текста: " << code.length() << endl;
     coder.printFrequency();
     coder.printCodes();
+    cout << "Декодированный текст: " << coder.decode(code) << endl;
     return 0;
 }

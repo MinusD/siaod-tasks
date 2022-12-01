@@ -104,7 +104,11 @@ private:
         // l - левая граница текущего рассматрвиаемого массива
         // r - правая граница текущего рассматрвиаемого массива
         //если l + 1 = r - значит текущий массив при разбиении даст два элемента, верхний - 1, нижний - 0
+
+//        cout << "l = " << l << " r = " << r << "\n";
+
         if (l + 1 == r) {
+            cout << "l = " << l << " r = " << r << " " << frequencies[l].first << " " << frequencies[r].first <<  "\n";
             code_table[frequencies[l].first] += "0";
             code_table[frequencies[r].first] += "1";
             return;
@@ -117,9 +121,12 @@ private:
         int d = r;
         int sum_l = 0; //сумма левой части массива
         int sum_r = frequencies[r].second; //сумма правой части массива
-
+//        cout << "rs = " << sum_r << endl;
         auto accumulate_fun = [](int accumulator, const std::pair<char, int> &s1) { return accumulator + s1.second; };
         sum_l = accumulate(frequencies.begin() + l, frequencies.begin() + r, 0, accumulate_fun);
+
+//        cout << "ls = " << sum_l << endl;
+
         while (sum_r < sum_l) { //добиваемся примерного равенства частей
             d--;
             sum_r += frequencies[d].second;
@@ -128,11 +135,23 @@ private:
 
         //получили два массива: [l, d-1] и [d, r]
         //проставим им соответсвующие биты
-        cout << "l = " << l << " d = " << d << " r = " << r << "\n";
-        for (int i = l; i <= r; i++) {
-            if (i <= d - 1) code_table[frequencies[i].first] += "0";
-            else code_table[frequencies[i].first] += "1";
-        }
+//        cout << "l = " << l << " d = " << d << " r = " << r << " leftSum = " << sum_l << " rightSum = " << sum_r << endl;
+//        for (int i = l; i <= r; i++) {
+//            if (i <= d - 1)
+//                code_table[frequencies[i].first] += "0";
+//            else
+//                code_table[frequencies[i].first] += "1";
+//        }
+        // Выводим полученные коды
+//        cout << "Codes:\n";
+//        for (auto pair: code_table) {
+//            char ch = pair.first;
+//            if (ch == '\n') cout << "/n:";
+//            else if (ch == ' ') cout << "<>:";
+//            else cout << ch << left << setw(2) << ":";
+//            cout << pair.second << "\n";
+//        }
+
 
         //продолжаем делить имеющиеся два массива
         get_codes(l, d - 1);
