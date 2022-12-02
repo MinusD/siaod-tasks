@@ -13,7 +13,7 @@ class Coder {
     vector<string> codes; // Коды
 
 public:
-    explicit Coder(string text) : text(text), length(text.size()) {
+    Coder(string text) : text(text), length(text.size()) {
         /*
          * Конструктор
          */
@@ -49,6 +49,7 @@ public:
             rightSum += frequencies[border];
             leftSum -= frequencies[border];
         }
+
         // Добавление 0 и 1 к кодам
         for (int i = left; i <= right; i++) {
             if (i <= border - 1) {
@@ -113,7 +114,7 @@ public:
          */
         for (auto ch: text) {
             auto it = find(symbols.begin(), symbols.end(), ch);
-            if (it == symbols.end()) {
+            if (it == symbols.end()) { // Если символа нет в векторе
                 symbols.push_back(ch);
                 frequencies.push_back(1);
             } else {
@@ -147,19 +148,12 @@ public:
             cout << symbols[i] << "\t" << codes[i] << endl;
         }
     }
-
-    void printStats() {
-        cout << "Статистика:" << endl;
-        cout << "Длина исходной строки: " << length << endl;
-        cout << "Длина закодированной строки: " << code().size() << endl;
-        cout << "Коэффициент сжатия: " << (double) (length * 8) / code().size() << endl;
-    }
 };
 
 int main() {
     setlocale(0, "");
     string text;
-    cout << "Введите текст: ";
+//    cout << "Введите текст: ";
 //    getline(cin, text);
     text = "The diverse and rich experience of the new model of organizational activity directly depends on the "
            "system of large-scale changes in a number of parameters. Does the task of the organization, in parti"
@@ -174,10 +168,10 @@ int main() {
     string code = coder.code();
     cout << "Закодированный текст: " << code << endl;
     cout << "Длина закодированного текста: " << code.length() << endl;
+    cout << "Коэффициент сжатия: " << (double) code.length() / (text.length() * 8) << endl;
     coder.printFrequency();
     coder.printCodes();
     cout << "Декодированный текст: " << coder.decode(code) << endl;
 
-    coder.printStats();
     return 0;
 }

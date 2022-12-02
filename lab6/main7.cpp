@@ -1,22 +1,13 @@
-/*
- * Кодирование и декодирование Метод Хаффмана
- *
- * Входные данные: текстовый файл
- *
- * Выходные данные: закодированный текстовый файл
- */
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <map>
 #include <fstream>
 #include <set>
-#include <queue>
 
 using namespace std;
 
-struct Node { //узел Н-дерева
+struct Node { // Узел дерева
     Node(string symbols, int fr) : symb(symbols), frequency(fr) {}
 
     Node *left = nullptr;
@@ -31,7 +22,7 @@ class Coder {
     map<char, pair<int, string>> codes; // Таблица кодов
     vector<Node *> nodes; // Вектор узлов
     int length = 0; // Длина текста
-    int zip_length = 0; // Длина сжатого текста
+    int encodeLength = 0; // Длина сжатого текста
 public:
 
     Coder(string text) : text(text), length(text.size()) {
@@ -48,18 +39,17 @@ public:
         for (auto ch: text) {
             result += codes[ch].second;
         }
-
         return result;
     }
 
     string decode(string text) {
         string result = "";
-        while (text.size() > 0) { //пока остались необработанные символы
-            for (auto ch: codes) { //обходим таблицу кодов
-                if (text.find(ch.second.second) == 0) { //если какой-то код совпал с началом строки
-                    result += ch.first; //добавили символ в ответ
-                    text = text.substr(ch.second.second.size(), text.size()); //убрали совпавший фрагмент
-                    break; //начали заново
+        while (!text.empty()) { // Пока остались необработанные символы
+            for (auto ch: codes) { // Обходим таблицу кодов
+                if (text.find(ch.second.second) == 0) { // Если какой-то код совпал с началом строки
+                    result += ch.first; // Добавляем символ в результат
+                    text = text.substr(ch.second.second.size(), text.size()); // Убираем из строки обработанный код
+                    break; // Переходим к следующему символу
                 }
             }
         }
@@ -83,10 +73,9 @@ public:
         for (auto dt: info) {
             char ch = dt.first;
             if (ch == '\n') cout << "/n:";
-            else if (ch == ' ') cout << "<>:";
             else cout << ch << left << setw(2) << ":"; //вывели символ
-            cout << dt.second.first << " |";
-            cout << left << setw(10) << setprecision(5) << (double) dt.second.first / length << " | ";
+            cout << dt.second.first << "\t";
+            cout << left << setw(10) << setprecision(5) << (double) dt.second.first / length << " ";
             cout << dt.second.second << "\n"; //вывели его код
         }
     }
@@ -104,12 +93,11 @@ public:
         // Сортировка по частоте
         sort(nodes.begin(), nodes.end(),
              [](const Node *n1, const Node *n2) { return n1->frequency > n2->frequency; });
-
     }
 
 
     void getCodes() {
-        while (nodes.size() > 1) {
+        while (nodes.size() > 1) { // Пока в векторе есть хотя бы два элемента
             Node *l = getElem(); // Получаем минимальный элемент
             Node *r = getElem(); // Получаем следующий минимальный элемент
             Node *parent = new Node(l->symb + r->symb, l->frequency + r->frequency); // Создаем новый узел
@@ -123,7 +111,7 @@ public:
         graph(root, "");
     }
 
-    //вспомогательный метод для обхода графа
+    // Вспомогательный метод для обхода графа
     void graph(Node *root, string code) {
         // Если узел не пустой
         if (root->left == nullptr || root->right == nullptr) {
@@ -155,4 +143,6 @@ int main() {
     coder.showCodes();
     cout << res << "\n";
     cout << coder.decode(res) << "\n";
+    // Коэффициент сжатия
+    cout << "Коэффициент сжатия: " << (double) res.size() / (s.size() * 8) << "\n";
 }
