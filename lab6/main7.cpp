@@ -12,6 +12,7 @@
 #include <map>
 #include <fstream>
 #include <set>
+#include <queue>
 
 using namespace std;
 
@@ -25,7 +26,12 @@ struct Node { //узел Н-дерева
 };
 
 class Coder {
-    string text;
+    string text; // Исходный текст
+    Node *root; // Корень дерева
+    map<char, pair<int, string>> codes; // Таблица кодов
+    vector<Node *> nodes; // Вектор узлов
+    int length = 0; // Длина текста
+    int zip_length = 0; // Длина сжатого текста
 public:
 
     Coder(string text) : text(text), length(text.size()) {
@@ -62,7 +68,7 @@ public:
 
 
     //вывод таблицы символов
-    void dis_freq_codes() {
+    void showCodes() {
         if (codes.size() == 0) {
             cout << "No symbols" << "\n";
             return;
@@ -98,33 +104,38 @@ public:
         // Сортировка по частоте
         sort(nodes.begin(), nodes.end(),
              [](const Node *n1, const Node *n2) { return n1->frequency > n2->frequency; });
+
     }
 
 
     void getCodes() {
         while (nodes.size() > 1) {
-            Node *l = getElem();
-            Node *r = getElem();
-            Node *parent = new Node(l->symb + r->symb, l->frequency + r->frequency);
-            parent->left = l;
-            parent->right = r;
-            nodes.push_back(parent);
-            sort(nodes.begin(), nodes.end(),
+            Node *l = getElem(); // Получаем минимальный элемент
+            Node *r = getElem(); // Получаем следующий минимальный элемент
+            Node *parent = new Node(l->symb + r->symb, l->frequency + r->frequency); // Создаем новый узел
+            parent->left = l; // Устанавливаем левого потомка
+            parent->right = r; // Устанавливаем правого потомка
+            nodes.push_back(parent); // Добавляем в вектор
+            sort(nodes.begin(), nodes.end(), // Сортируем по частоте
                  [](const Node *n1, const Node *n2) { return n1->frequency > n2->frequency; });
         }
-        root = getElem();
+        root = getElem(); // Получаем корень дерева
         graph(root, "");
     }
 
     //вспомогательный метод для обхода графа
     void graph(Node *root, string code) {
+        // Если узел не пустой
         if (root->left == nullptr || root->right == nullptr) {
-            codes[root->symb[0]].second = code;
+            // Если узел лист
+            codes[root->symb[0]].second = code; // Записываем код
             return;
         }
+
+        // Если узел не лист
         graph(root->left, code + "0");
         graph(root->right, code + "1");
-   }
+    }
 
     Node *getElem() {
         /*
@@ -134,20 +145,14 @@ public:
         nodes.pop_back();
         return el;
     }
-
-    Node *root; // Корень дерева
-    map<char, pair<int, string>> codes; // Таблица кодов
-    vector<Node *> nodes; // Вектор узлов
-    int length = 0; // Длина текста
-    int zip_length = 0; // Длина сжатого текста
 };
 
 
 int main() {
-    string s = "Gizatullina Alsu Ilnurovna";
+    string s = "gizatullina alsu ilnurovna";
     Coder coder(s);
     string res = coder.code();
-    coder.dis_freq_codes();
+    coder.showCodes();
     cout << res << "\n";
     cout << coder.decode(res) << "\n";
 }

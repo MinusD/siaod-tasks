@@ -1,13 +1,3 @@
-/*
- * Кодирование информации методом Шеннона Фано
- *
- * Входные данные: строка, состоящая из символов латинского алфавита
- *
- * Выходные данные: кодовая таблица, закодированная строка
- *
- *
- */
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -16,8 +6,8 @@
 using namespace std;
 
 class Coder {
-    string text;
-    int length;
+    string text; // Исходный текст
+    int length; // Длина текста
     vector<char> symbols; // Символы
     vector<int> frequencies; // Частоты
     vector<string> codes; // Коды
@@ -33,8 +23,6 @@ public:
         /*
          * Рекурсивная функция для получения кодов
          */
-
-
         if (left + 1 == right) {
             codes[left] += "0";
             codes[right] += "1";
@@ -63,7 +51,7 @@ public:
         }
         // Добавление 0 и 1 к кодам
         for (int i = left; i <= right; i++) {
-            if  (i <= border - 1) {
+            if (i <= border - 1) {
                 codes[i] += "0";
             } else {
                 codes[i] += "1";
@@ -94,7 +82,7 @@ public:
         getCodes(0, frequencies.size() - 1);
 
         string result;
-        for (char c : text) {
+        for (char c: text) {
             result += codes[getIndex(c)];
         }
         return result;
@@ -148,7 +136,7 @@ public:
         cout << "Таблица вероятностей:" << endl;
         cout << "Символ\tЧастота" << endl;
         for (int i = 0; i < symbols.size(); i++) {
-            cout << symbols[i] << "\t" << (double)frequencies[i] / length  << endl;
+            cout << symbols[i] << "\t" << (double) frequencies[i] / length << endl;
         }
     }
 
@@ -160,6 +148,12 @@ public:
         }
     }
 
+    void printStats() {
+        cout << "Статистика:" << endl;
+        cout << "Длина исходной строки: " << length << endl;
+        cout << "Длина закодированной строки: " << code().size() << endl;
+        cout << "Коэффициент сжатия: " << (double) (length * 8) / code().size() << endl;
+    }
 };
 
 int main() {
@@ -167,7 +161,12 @@ int main() {
     string text;
     cout << "Введите текст: ";
 //    getline(cin, text);
-    text = "Hello, world!";
+    text = "The diverse and rich experience of the new model of organizational activity directly depends on the "
+           "system of large-scale changes in a number of parameters. Does the task of the organization, in parti"
+           "cular the constant quantitative growth and the scope of our activity, require us to systematically a"
+           "nalyze the relevant conditions for activation? Thus, the implementation of the planned development p"
+           "lan requires the definition and clarification of the positions taken by the participants in relation t"
+           "o the tasks set.";
     cout << "Исходный текст: " << text << endl;
     cout << "Длина текста: " << text.length() << endl;
 
@@ -178,5 +177,7 @@ int main() {
     coder.printFrequency();
     coder.printCodes();
     cout << "Декодированный текст: " << coder.decode(code) << endl;
+
+    coder.printStats();
     return 0;
 }
