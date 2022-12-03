@@ -63,15 +63,16 @@ public:
             cout << "No symbols" << "\n";
             return;
         }
-        vector<pair<char, pair<int, string>>> info;
-        for (auto ch: codes) info.push_back(ch);
-        sort(info.begin(), info.end(),
+        vector<pair<char, pair<int, string>>> info; // Вектор для сортировки
+        for (auto ch: codes) info.push_back(ch); // Заполняем вектор
+        sort(info.begin(), info.end(), // Сортируем по частоте
              [](pair<char, pair<int, string>> s1, pair<char, pair<int, string>> s2) {
                  return s1.second.second.size() < s2.second.second.size();
              });
 
+        // Выводим таблицу
         for (auto dt: info) {
-            char ch = dt.first;
+            char ch = dt.first; // Символ
             if (ch == '\n') cout << "/n:";
             else cout << ch << left << setw(2) << ":"; //вывели символ
             cout << dt.second.first << "\t";
