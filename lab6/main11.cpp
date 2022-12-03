@@ -76,6 +76,14 @@ public:
             encodedText += getCode(text[i], root);
     }
 
+    void codes(Node *node, string code){
+        /*
+         * Recursive function for getting codes
+         */
+        if (node->left == nullptr || node->right == nullptr) { node->code = code; return; }
+        codes(node->left, code + "0");
+        codes(node->right, code + "1");
+    }
 
     string getCode(char symbol, Node *cur) {
         /*
@@ -93,14 +101,7 @@ public:
         return "";
     }
 
-    void codes(Node *node, string code){
-        /*
-         * Recursive function for getting codes
-         */
-        if (node->left == nullptr || node->right == nullptr) { node->code = code; return; }
-        codes(node->left, code + "0");
-        codes(node->right, code + "1");
-    }
+
 
     string decode(string basicString){
         /*
