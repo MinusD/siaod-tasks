@@ -93,14 +93,12 @@ public:
         return encodedText;
     }
 
-    string decode(string basicString) {
+    string decode(const string& basicString) {
         string decodedText;
         for (int i = 0; i < basicString.size(); i++) {
             for (auto &symbol: symbols) {
                 if (symbol.code == basicString.substr(i, symbol.code.size())) {
-                    decodedText += symbol.symbol;
-                    i += symbol.code.size() - 1;
-                    break;
+                    decodedText += symbol.symbol; i += symbol.code.size() - 1; break;
                 }
             }
         }
