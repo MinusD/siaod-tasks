@@ -30,8 +30,7 @@ int main() {
     for (int i = 0; i < 100; i++) {
         s += 'A' + rand() % 26;
     }
-    s = "ABCCBEA";
-//    s = "AABARA";
+//    s = "ABCCBEA";
 
     // Вывод строки
     cout << s << endl;
